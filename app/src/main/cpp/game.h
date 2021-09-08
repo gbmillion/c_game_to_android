@@ -8,15 +8,14 @@
  Features: four playable classes, plus a randomly genorated one of your choice, usable items , dynamic traps,
  	 	 	 six character attributes, active combat,
 
- Bugs/todo: there's a bug in the encryption causing the first line to be corrupted
+ Bugs//todo: there's a bug in the encryption causing the first line to be corrupted
  	 	 need to unlink / delete .tmp file
  ============================================================================
  */
-
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include "class.h"
-#include "crypt.h"
 #include <string.h>
 #include <time.h>
 
@@ -30,10 +29,10 @@ struct item db[255];
 void trap(int * hpp);
 void item(struct item invent[100]);
 void step(int * hpp, struct item  play[100]);
-void gen_char(struct class *toon);
-void combat(int * hpp, int monster_hp, struct class * player);
-void itemdb( struct item db[255]);
-void use(struct class * player);
+void gen_char(struct class_ *toon);
+void combat(int * hpp, int monster_hp, struct class_ * player);
+void itemdb( struct item db[255]);//needs work
+void use(struct class_ * player);
 void potion( int * trait, int buff);
 
 int main1(void) {
@@ -42,32 +41,32 @@ int main1(void) {
 	int i=0, e = 0;
 	time_t t;
 
-	itemdb(db);//load items
+	//itemdb(db);//load items
 
 	srand((unsigned) time(&t));
 	//build a board with randomly assigned "monster" or value
-	printf("Welcome to dungeon hack!\nCommands: i[inventory],x[exit],u[use]\n");
+	std::cout << "Welcome to dungeon hack!\nCommands: i[inventory],x[exit],u[use]\n";
 	for(i=0;i<10;++i){
 		for(e=0;e<10;++e){
 			//squares have a fifty fifty chance to have a random monster value on them
 			if (rand() % 100 > 50 ){
 				map[e][i]= rand() % 100;//monsters hp up to 100
 #if defined DEBUG_STATE
-				printf("%d",map[e][i]);
+				std::cout << "%d",map[e][i]);
 #endif
 			} else {
 				map[e][i]= 0;
 			}
 		}
 	}
-	printf("Generated 10x10 map.\n");
+	std::cout << "Generated 10x10 map.\n";
 #if defined DEBUG_STATE
-	printf("\n");
+	std::cout << "\n";
 #endif
-	struct class player;
+	struct class_ player;
 	gen_char(&player);//genorate player and class
 #if defined DEBUG_STATE
-	printf("Your hp is %d \n",player.hp);
+	std::cout << "Your hp is %d \n",player.hp);
 	int x=0;
 #endif
 	int c = 0,in=0;
@@ -75,10 +74,10 @@ int main1(void) {
 	//main game loop
 	i=0, e = 0; //set starting position
 #if defined DEBUG_STATE
-	printf("Cheats: t[test found items],l[list item db]\n");
+	std::cout << "Cheats: t[test found items],l[list item db]\n";
 #endif
-	printf("Use the w,a,s,d keys to travel.\n");
-	while (1){
+	std::cout << "Use the w,a,s,d keys to travel.\n"; //turn off input loop for game loop
+	{//while (1){
 		c = getchar();
 		//each movement has a 30 percent chance of hitting a trap
 		switch(c){
@@ -86,28 +85,28 @@ int main1(void) {
 		//call combat check
 		case 'a':
 			e++;
-			printf("You have went left[w,a,s,d].\n");
+			std::cout << "You have went left[w,a,s,d].\n";
 			if(map[e][i]>0){
 				combat(&health,map[e][i],&player);
 			} else step(&health,player.inventory);
 			break;
 		case 's':
 			i--;
-			printf("You have gone back[w,a,s,d].\n");
+			std::cout << "You have gone back[w,a,s,d].\n";
 			if(map[e][i]>0){
 				combat(&health,map[e][i],&player);
 			}else step(&health,player.inventory);
 			break;
 		case 'd':
 			e--;
-			printf("You have gone right[w,a,s,d].\n");
+			std::cout << "You have gone right[w,a,s,d].\n";
 			if(map[e][i]>0){
 				combat(&health,map[e][i],&player);
 			}else step(&health,player.inventory);
 			break;
 		case 'w':
 			i++;
-			printf("You have gone forward[w,a,s,d].\n");
+			std::cout << "You have gone forward[w,a,s,d].\n";
 			if(map[e][i]>0){
 				combat(&health,map[e][i],&player);
 			}else step(&health,player.inventory);
@@ -115,7 +114,7 @@ int main1(void) {
 		case 'i':
 			//list inventory
 			while (player.inventory[in].amount=='1') {
-				printf("%d: %s\n",in,player.inventory[in].type);
+				std::cout << "%d: %s\n" << in << player.inventory[in].type;
 				in++;
 			}
 			in=0;
@@ -131,14 +130,15 @@ int main1(void) {
 			break;
 		case 'l':
 			while (x<=itemdb_size){
-				printf("%s,%s,%d\n",db[x].trait,db[x].type,db[x].amount);
+				std::cout << "%s,%s,%d\n",db[x].trait,db[x].type,db[x].amount);
 				x++;
 			}
 			x=0;
 			break;
 #endif
 		default:
-			printf("[w,a,s,d]\n");
+			std::cout << "[w,a,s,d]\n";
+			exit(0);
 		}
 	}
 
@@ -150,7 +150,7 @@ void trap(int * hpp){
 	int hp = *hpp,dmg=0;
 	dmg = rand() % 10;
 	hp = hp - dmg;
-	printf("You have stepped on a trap, %d damage.\n", dmg);
+	std::cout << "You have stepped on a trap, %d damage.\n" << dmg;
 }//just apply trap dmg
 void item(struct item invent[100]){
 	time_t t;
@@ -163,9 +163,9 @@ void item(struct item invent[100]){
 	strcpy(invent[i].trait,db[item].trait);
 	strcpy(invent[i].type,db[item].type);
 	invent[i].amount=db[item].amount;//load item into db
-	printf("You have found a  %s.\n",invent[i].type);
+	std::cout << "You have found a  %s.\n"<<invent[i].type ;
 #if defined DEBUG_STATE
-	printf("%s\n%d\n",invent[i].trait,i);
+	std::cout << "%s\n%d\n",invent[i].trait,i);
 #endif
 }
 void step(int * hpp, struct item play[100]){
@@ -174,12 +174,12 @@ void step(int * hpp, struct item play[100]){
 	if (rand() % 100 < 30) trap(hpp);//30% to hit trap
 	else if (rand() % 100 > 90) item(play);//10% chance to get item
 }
-void gen_char(struct class *toon){
+void gen_char(struct class_ *toon){
 	time_t t;
 	int i=0, n;
 	char num=-1;
 	srand((unsigned) time(&t));
-	printf("Generating you player.\n");//start off as randomly generated class
+	std::cout << "Generating you player.\n";//start off as randomly generated class
 	toon->Dexterity=rand() % 20 ;
 	toon->Stamina=100+rand() % 20 ;
 	toon->Wisdom=rand() % 20 ;
@@ -189,16 +189,16 @@ void gen_char(struct class *toon){
 	toon->hp=100+rand() % 20 ;
 	toon->mana=100+rand() % 20 ;
 #if defined DEBUG_STATE
-	printf("Your hp is %d \n",toon->hp);
+	std::cout << "Your hp is %d \n",toon->hp);
 #endif
-	printf("What would you like your class to be called(Presets: mage,fighter,healer,rouge)?\n");
+	std::cout << "What would you like your class to be called(Presets: mage,fighter,healer,rouge)?\n";
 	fgets(toon->clas, 25, stdin);
 	i=0;
-    while (toon->clas[i] != '\n' )//sanitize input to lower case letters only
-    {
+   // while (toon->clas[i] != '\n' )//sanitize input to lower case letters only
+    {//turned off to test portability
 		n = sscanf(&toon->clas[i], "%[a-z]", &num);
 		if (n != 1) {
-			printf("Error! You can only enter lower case letters:\n");
+			std::cout << "Error! You can only enter lower case letters:\n";
 			fgets(toon->clas, 25, stdin);
 			i=-1;
 			num = -1;
@@ -207,20 +207,21 @@ void gen_char(struct class *toon){
 		i++;
     }
     i=0;
-	while(1){//chop the new line off the clas char
+	{//while(1){//chop the new line off the clas char
+		//turned off for portability
 		if (toon->clas[i]==10){
 			toon->clas[i]=0;
-			break;
+			//break;
 		} else i++;
 	}
-	printf("What would you like your character to be called?\n");
+	std::cout << "What would you like your character to be called?\n";
 	fgets(toon->name, 25, stdin);
 	i=0;
-    while (toon->name[i] != '\n' )//sanitize input to lower case letters only
-    {
+   // while (toon->name[i] != '\n' )//sanitize input to lower case letters only
+    {//turned off for portability
 		n = sscanf(&toon->name[i], "%[a-z]", &num);
 		if (n != 1) {
-			printf("Error! You can only enter lower case letters:\n");
+			std::cout << "Error! You can only enter lower case letters:\n";
 			fgets(toon->clas, 25, stdin);
 			i=-1;
 			num = -1;
@@ -231,7 +232,7 @@ void gen_char(struct class *toon){
     i=0;
 	load_clas(toon);//apply class template to generated class
 }
-void combat(int * hpp, int monster_hp, struct class * player){
+void combat(int * hpp, int monster_hp, struct class_ * player){
 	time_t t;
 	int hit_dmg=0, hp = *hpp, heal=0;
 	srand((unsigned) time(&t));
@@ -241,17 +242,17 @@ void combat(int * hpp, int monster_hp, struct class * player){
 			if(player->Dexterity < rand() % 20){//use dex to determine if you avoid an attack
 				hit_dmg = rand() % 10 ;
 				hp = hp - hit_dmg;
-				printf("You have been hit for %d.\n",hit_dmg);
+				std::cout << "You have been hit for %d.\n"<< hit_dmg ;
 				hit_dmg=0;
 			} else {
-				printf("You jump out of the way, avoiding damage.\n");
+				std::cout << "You jump out of the way, avoiding damage.\n";
 			}
 			if(hp<=0){//check players hp & exit if dead
-				printf("You have died.\n");
+				std::cout << "You have died.\n";
 				exit(0);
 				break;
 			} else {
-				printf("Health:%d\n",hp);
+				std::cout << "Health:%d\n"<<hp;
 			}
 		} else {
 			//you hit monster (or heal yourself)
@@ -261,11 +262,11 @@ void combat(int * hpp, int monster_hp, struct class * player){
 					else hit_dmg = player->Strength * rand() % 10 ;
 				// if you're out of stamina you do half damage
 				monster_hp = monster_hp - hit_dmg;
-				printf("You have hit the monster for %d.\n",hit_dmg);
+				std::cout << "You have hit the monster for %d.\n"<<hit_dmg;
 				hit_dmg=0;
 			} else {
 				heal = rand() % 10;
-				printf("The gods have favor on you, healing you for %d.\n", heal);
+				std::cout << "The gods have favor on you, healing you for %d.\n"<< heal;
 				player->hp = player->hp + heal;
 			}
 		}
@@ -274,26 +275,26 @@ void combat(int * hpp, int monster_hp, struct class * player){
 			if (player->mana > 0){
 				hit_dmg = rand() % 10 ;
 				monster_hp = monster_hp - hit_dmg;
-				printf("Your spell  has hit the monster for %d.\n",hit_dmg);
+				std::cout << "Your spell  has hit the monster for %d.\n"<<hit_dmg;
 				hit_dmg=0;
 				player->mana = player->mana - 10;
 			}
 
 		}
 		if (player->Agility > rand ()%20){//check agil for chance of additional attack
-			printf("You dodge a blow and are granted an additional attack.\n");
+			std::cout << "You dodge a blow and are granted an additional attack.\n";
 
 			//hit_dmg = player->Strength * rand() % 10 ;//i don't know why this is producing a negative number
 			hit_dmg = player->Strength;
 			monster_hp = monster_hp - hit_dmg;
-			printf("You have hit the monster for %d.\n",hit_dmg);
+			std::cout << "You have hit the monster for %d.\n"<<hit_dmg;
 #if defined DEBUG_STATE
-			printf("%d str %d monster_hp %d hit_dmg\n",player->Strength, monster_hp, hit_dmg);
+			std::cout << "%d str %d monster_hp %d hit_dmg\n",player->Strength, monster_hp, hit_dmg);
 #endif
 			hit_dmg=0;
 		}
 		if(monster_hp<=0){//you have killed the monster, reset player
-			printf("The monster is dead.\n");
+			std::cout << "The monster is dead.\n";
 			player->mana = 100;
 			player->Stamina = 100;
 			player->hp=100;
@@ -304,31 +305,12 @@ void itemdb( struct item db[255])
 {
 	int i=0,c,comma=0,letter=0;
     char* fname = "item.db";//data base must be in comma separated value list format (may encrypt or encode to prevent editing)
-    FILE * fp= fopen(".key", "r");
-    if(!fp) {
-#if defined DEBUG_STATE
-    	  printf("Encrypting item.db\n");
-#endif
-    	encrypt ("item.db");
-    } else {
-    	fclose(fp);
-    }
-    fp = fopen(fname, "r");
+    FILE * fp= fopen(fname, "r");
     if(!fp) {
         perror("Failed to load item db.\n");
         exit(1);
     }
-#if defined DEBUG_STATE
-	  printf("decrypting item.db\n");
-#endif
-    decrypt(fname);
 
-    fp = fopen(".tmp", "r");
-    if(!fp) {
-        perror("Failed to load item db.\n");
-        exit(1);
-    }
-    //need to decrypt db
     while ((c = fgetc(fp)) != EOF) { // loop until end of file
        if (c != ','){
 #if defined DEBUG_STATE
@@ -356,9 +338,9 @@ void itemdb( struct item db[255])
        }
     }
 #if defined DEBUG_STATE
-    printf("%s",db[i].trait);
-    printf("%s",db[i].type);
-    printf("itemdb_size %d\n",i);
+    std::cout << "%s",db[i].trait);
+    std::cout << "%s",db[i].type);
+    std::cout << "itemdb_size %d\n",i);
 #endif
     itemdb_size=i;
     if (ferror(fp)) {
@@ -372,19 +354,19 @@ void itemdb( struct item db[255])
     }
     fclose(fp);
 }
-void use(struct class * player){
+void use(struct class_ * player){
 	int i=0,c=0;
 	time_t t;
 	//use item and call function for right item ID
 	srand((unsigned) time(&t));
-	printf("What inventory item do you wish to use?\n");
+	std::cout << "What inventory item do you wish to use?\n";
 	c = getc(stdin);
 	c = getchar();// i don't know why both of these lines are need but it wont grab a char if they're not there
 	c = c-48;//convert from ascii to decimal
 	int item_type = player->inventory[c].amount - 48;
 
 #if defined DEBUG_STATE
-	printf("%d - 48 = %d",player->inventory[c].amount,item_type);
+	std::cout << "%d - 48 = %d",player->inventory[c].amount,item_type);
 #endif
 	if(item_type == 1) {
 		//item type one is potions
@@ -416,7 +398,7 @@ void use(struct class * player){
 		if( strcmp((char *) &lhs, (char *)&rhs ) == 0){
 			potion(&player->Intelligence,i);
 		}
-		printf("You use a %s, which increases your %s by %d points.\n",player->inventory[c].type,player->inventory[c].trait,i);
+		std::cout << "You use a %s, which increases your %s by %d points.\n"<<player->inventory[c].type << player->inventory[c].trait<<i;
 		//remove item from inventory
 		player->inventory[c].trait[0]='\0';
 		player->inventory[c].type[0]='\0';

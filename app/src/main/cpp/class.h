@@ -11,19 +11,12 @@
 #include <string.h>
 //#define DEBUG_STATE ;
 // maybe add predefined classes at some point
-
 struct item{
 	char type[255];
 	char trait[255];
 	int amount;//item id number, not amount
-};/*
-Format goes as is:
-type[string of name of type of item],trait[the class trait effected by the item],amount[item id number],
-each item has a unique id number, with examples being:
-potion,Wisdom,1
-weapon,Strength,2
-*/
-struct class{//base class template
+};
+struct class_{//base class template
 	char name[25];
 	int Dexterity;
 	int Stamina;
@@ -36,7 +29,15 @@ struct class{//base class template
 	struct item inventory[100];
 	char clas[25];
 };
-void load_clas(struct class *toon){//apply predefined class templates
+/*
+Format goes as is:
+type[string of name of type of item],trait[the class trait effected by the item],amount[item id number],
+each item has a unique id number, with examples being:
+potion,Wisdom,1
+weapon,Strength,2
+*/
+
+void load_clas(struct class_ *toon){//apply predefined class templates
 	char class_name[25] = "mage";
 
 	int error=strcmp(  class_name,  toon->clas );
