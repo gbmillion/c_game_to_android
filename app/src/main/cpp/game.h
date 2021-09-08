@@ -138,7 +138,7 @@ int main1(void) {
 #endif
 		default:
 			std::cout << "[w,a,s,d]\n";
-			exit(0);
+			//exit(0);
 		}
 	}
 
@@ -172,7 +172,7 @@ void step(int * hpp, struct item play[100]){
 	time_t t;
 	srand((unsigned) time(&t));
 	if (rand() % 100 < 30) trap(hpp);//30% to hit trap
-	else if (rand() % 100 > 90) item(play);//10% chance to get item
+	//else if (rand() % 100 > 90) item(play);//10% chance to get item
 }
 void gen_char(struct class_ *toon){
 	time_t t;
