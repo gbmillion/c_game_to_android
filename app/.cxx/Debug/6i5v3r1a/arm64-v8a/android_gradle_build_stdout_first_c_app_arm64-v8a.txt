@@ -1,2 +1,8 @@
 ninja: Entering directory `/home/user/programming/android/first_C_app/app/.cxx/Debug/6i5v3r1a/arm64-v8a'
-ninja: no work to do.
+[1/2] Building CXX object CMakeFiles/first_c_app.dir/native-lib.cpp.o
+In file included from /home/user/programming/android/first_C_app/app/src/main/cpp/native-lib.cpp:4:
+/home/user/programming/android/first_C_app/app/src/main/cpp/game.h:307:19: warning: ISO C++11 does not allow conversion from string literal to 'char *' [-Wwritable-strings]
+    char* fname = "item.db";//data base must be in comma separated value list format (may encrypt or encode to prevent editing)
+                  ^
+1 warning generated.
+[2/2] Linking CXX shared library /home/user/programming/android/first_C_app/app/build/intermediates/cxx/Debug/6i5v3r1a/obj/arm64-v8a/libfirst_c_app.so
