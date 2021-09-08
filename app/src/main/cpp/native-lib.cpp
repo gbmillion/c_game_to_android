@@ -4,20 +4,19 @@
 #include "game.h"
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_gbmxdev_first_1c_1app_MainActivity_stringFromJNI( JNIEnv* env, jobject /* this */) {
-    std::string hello = "Hello from C++";
-    std::cout << "we stsarting main on game now\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+    std::string hello = "Dungeon crawler in C++";
     class_ player ;
-    int itemdb_size=0;
-    struct item db[255];
-
-    gen_char(&player);
-    trap(&player.hp);
-    step(&player.hp,player.inventory);
-    use(&player);
-    potion( &player.Strength, player.Wisdom);
-    combat(&player.hp, 100, &player);
-    main1();
-    //item(player.inventory);
-    //itemdb(db);
+    /*
+     * items need to be redone
+     * need to fix output
+     * need to gather input
+     * */
+    //hello = gen_char(&player);
+    //hello = trap(&player.hp);//crashes
+    //hello = step(&player.hp,player.inventory);//crashes
+    //hello = use(&player);
+    //hello = potion( &player.Strength, player.Wisdom); //hangs
+    //hello = combat(&player.hp, 100, &player); //crashes
+    hello = main1();
     return env->NewStringUTF(hello.c_str());
 }
