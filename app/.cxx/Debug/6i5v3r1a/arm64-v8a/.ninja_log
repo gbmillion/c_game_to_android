@@ -1,0 +1,3 @@
+# ninja log v5
+0	507	1631099974	CMakeFiles/first_c_app.dir/native-lib.cpp.o	f66b14295f450db4
+507	608	1631099974	/home/user/programming/android/first_C_app/app/build/intermediates/cxx/Debug/6i5v3r1a/obj/arm64-v8a/libfirst_c_app.so	d939804ed9bf4956
